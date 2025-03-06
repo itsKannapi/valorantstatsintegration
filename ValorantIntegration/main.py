@@ -27,7 +27,9 @@ def scrape_tracker_gg(url, browser="edge"):
     try:
         # Scrape Rank
         try:
-            rank_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, ".valorant-rank-icon + span")))
+            rank_element = wait.until(EC.presence_of_element_located(
+                (By.XPATH, "//div[contains(text(), 'Rating')]/following-sibling::div")
+            ))
             data["Rank"] = rank_element.text.strip()
         except:
             data["Rank"] = "N/A"
@@ -35,7 +37,8 @@ def scrape_tracker_gg(url, browser="edge"):
         # Scrape ACS (Average Combat Score)
         try:
             acs_element = wait.until(EC.presence_of_element_located(
-                (By.XPATH, "//div[contains(text(), 'Combat Score')]/following-sibling::div")))
+                (By.XPATH, "//div[text()='ACS']/following-sibling::div[contains(@class, 'value')]")
+            ))
             data["ACS"] = acs_element.text.strip()
         except:
             data["ACS"] = "N/A"
@@ -43,15 +46,17 @@ def scrape_tracker_gg(url, browser="edge"):
         # Scrape K/D Ratio
         try:
             kd_element = wait.until(EC.presence_of_element_located(
-                (By.XPATH, "//div[contains(text(), 'K/D Ratio')]/following-sibling::div")))
+                (By.XPATH, "//span[contains(text(), 'K/D Ratio')]/following::span[@class='value'][1]")
+            ))
             data["K/D"] = kd_element.text.strip()
         except:
             data["K/D"] = "N/A"
 
         # Scrape Win Percentage
         try:
-            win_percent_element = wait.until(
-                EC.presence_of_element_located((By.XPATH, "//div[contains(text(), 'Win %')]/following-sibling::div")))
+            win_percent_element = wait.until(EC.presence_of_element_located(
+                (By.XPATH, "//span[contains(text(), 'Win %')]/following::span[@class='value'][1]")
+            ))
             data["Win Percentage"] = win_percent_element.text.strip()
         except:
             data["Win Percentage"] = "N/A"
@@ -59,7 +64,8 @@ def scrape_tracker_gg(url, browser="edge"):
         # Scrape Headshot Percentage
         try:
             hs_percent_element = wait.until(EC.presence_of_element_located(
-                (By.XPATH, "//div[contains(text(), 'Headshot %')]/following-sibling::div")))
+                (By.XPATH, "//span[contains(text(), 'Headshot %')]/following::span[@class='value'][1]")
+            ))
             data["Headshot Percentage"] = hs_percent_element.text.strip()
         except:
             data["Headshot Percentage"] = "N/A"
@@ -73,10 +79,9 @@ def scrape_tracker_gg(url, browser="edge"):
     finally:
         driver.quit()
 
-
 if __name__ == "__main__":
     # Replace with your Tracker.gg profile URL
-    url = "https://tracker.gg/valorant/profile/riot/vauv%2010k-izzy/overview"
+    url = "https://tracker.gg/valorant/profile/riot/vauv%2010k%23izzy/overview?season=all"
 
     print("Scraping data from Tracker.gg...")
     stats = scrape_tracker_gg(url, browser="edge")
